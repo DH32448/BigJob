@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>排课管理</h1>
+<br>
+<br>
+<div th:include="main::nav"></div>
+<div style="display: flex; justify-content: space-between">
+    <div>
+        <table border="1">
+            <tr>
+                <th>kid</th>
+                <th>tid</th>
+                <th>班级编号</th>
+                <th>课程编号</th>
+            </tr>
+            <tr th:each="x:${taskEntityList}">
+                <td th:text="${x.kid}"></td>
+                <td th:text="${x.tid}"></td>
+                <td th:text="${x.clzno}"></td>
+                <td th:text="${x.cno}"></td>
+                <td><a th:href="'/adm/task/remove?kid=' + ${x.kid} + '&tid  =' + ${x.tid}">删除</a></td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <a href="/adm/task/go2add">安排课程</a>
+        <div th:if="${action!=null}">
+            <form th:action="'/adm/task/'+ ${action}" method="post">
+                <label >
+                    教师名称：
+                    <select name="tid" >
+                        <option  th:each="x:${go2addTeaUserByRole}" th:text="${x.uname}" th:value="${x.uid}"></option>
+                    </select>
+
+                </label><br>
+
+                <label>
+                    班级：
+                    <select name="clzno" >
+                        <option  th:each="x:${go2addTeaClz}" th:text="${x.clzname}" th:value="${x.clzno}"></option>
+                    </select>
+                </label><br>
+                <label>
+                    课程：
+                    <select name="cno" >
+                        <option  th:each="x:${go2addTeaCourse}" th:text="${x.cname}" th:value="${x.cno}"></option>
+                    </select>
+                </label><br>
+                <label>
+                    <input  type="submit" value="添加排课">
+                </label>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

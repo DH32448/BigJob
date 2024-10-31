@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>main</title>
+</head>
+<body>
+    <h1>学生成绩管理</h1>
+<div>
+    导航栏
+    <div th:fragment="nav" >
+        <h3 align="center">基于SpringBoot2.7.x MyBatis2.3.x Thymeleaf 的学生成绩简易系统-Mark5</h3>
+        <div style="display: flex; justify-content: space-between">
+            <h4><a href="/home/main">学生成绩简易系统-首页</a></h4>
+            <div  style="width: 50%;display: flex; justify-content: space-between; padding-top: 12px">
+                <p style="color: brown" th:text="${user!=null? '已登录':'未登录'}"></p>
+                <p style="color: blue" th:text="${user!=null? '姓名:'+user.uname:'姓名:'}">姓名:</p>
+                <p style="color: blueviolet" th:text="${user!=null? user.role:'角色:'}"></p>
+                <p style="color: blue"><a href="#">退出</a></p>
+                <p>&nbsp;</p>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <!--导航栏结束-->
+    <!--功能窗口-->
+    <!--登录窗口及功能窗口-->
+    <div style="display: flex; justify-content: space-between">
+        <!--登录窗口-->
+        <div style="width: 35%; display: flex; justify-content: space-between" th:if="${user==null}">
+            <div style="margin-left: 2%; width: 90%">
+                <h3 align="center">登录</h3>
+                <table width="90%" border="1" cellspacing="0" style="line-height: 36px">
+                    <form action='/home/login' method='post'>
+                        <tr>
+                            <td>手机号:</td> <td><input type='text' name='phone'></td>
+                        </tr>
+                        <tr>
+                            <td>密码:</td><td><input type='text' name='pwd'></td>
+                        </tr>
+                        <tr>
+                            <td></td><td><input type='submit' value='登录'></td>
+                        </tr>
+                    </form>
+                </table>
+                <h4 th:text="${error}"></h4>
+            </div>
+        </div>
+        <!--登录窗口结束-->
+
+        <!--功能窗口-->
+        <div style="border: antiquewhite 1px solid; width: 60%">
+            <!--管理员窗口-->
+            <div>
+                <h3>管理员端- 管理员登录后方可操作</h3>
+                <div th:if="${user!=null&&user.role==9}">
+                    <ul style="list-style: square">
+                        <li><a href="/adm/clz/go2show">班级管理</a></li>
+                        <li><a href="/adm/course/go2show">课程管理</a></li>
+                        <li><a href="/adm/student/go2show">学生管理</a></li>
+                        <li><a href="/adm/teacher/go2show">教师管理</a></li>
+                        <li><a href="/adm/task/go2show">安排教师到某个班级上某门课-有点难</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!--管理员窗口结束-->
+
+
+            <!--教师窗口-->
+            <div>
+                <h3>教师端-教师登录后方可操作</h3>
+                <div th:if="${user!=null&&user.role==5}">
+                    <ul style="list-style: square">
+                        <li><a href="#">修改密码</a></li>
+                        <li><a href="#">登分管理-难</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!--教师窗口结束-->
+
+            <!-- 学生窗口-->
+            <div>
+                <h3>学生端-学生登录后方可操作</h3>
+                <div th:if="${user!=null&&user.role==1}">
+                    <ul style="list-style: square">
+                        <li><a href="/stu/go2Pwd">修改密码</a></li>
+                        <li><a href="#">我的课程查询-我所在班级的课程表</a></li>
+                        <li><a href="#">我的成绩查询 - 有点难</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- 学生窗口结束-->
+        </div>
+        <!--功能窗口结束-->
+    </div>
+    <!--登录窗口及功能窗口-->
+</div>
+</body>
+</html>

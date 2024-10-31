@@ -1,0 +1,41 @@
+CREATE TABLE task (
+    kid INT PRIMARY KEY AUTO_INCREMENT,
+    tid INT NOT NULL,
+    clzno VARCHAR(20),
+    cno VARCHAR(20),
+    UNIQUE (tid, clzno, cno)  -- tid, clzno, cno 组合必须唯一
+);
+唯一
+ALTER TABLE t_task
+ADD CONSTRAINT unique_tid_clzno_cno UNIQUE (tid, clzno, cno);
+
+
+
+登分
+SELECT 
+    u.uid,
+    u.uname,
+    u.phone,
+    u.clzno,
+    c.cno,
+    c.cname
+FROM 
+    t_user u
+LEFT JOIN 
+    t_mark m ON u.phone = m.sno AND m.cno IN (SELECT cno FROM t_course)
+LEFT JOIN 
+    t_course c ON m.cno = c.cno
+WHERE 
+    u.role = '1'
+    AND u.clzno = 'B02'
+    AND m.id IS NULL;
+
+
+用于查询学生某些课程未登分
+SELECT
+    *
+FROM
+    t_user u
+		LEFT JOIN t_mark m on m.sno = u.phone
+		LEFT JOIN t_course c ON m.cno = c.cno
+		WHERE role = 1  AND c.cno IS NULL

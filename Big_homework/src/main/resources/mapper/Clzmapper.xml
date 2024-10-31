@@ -1,0 +1,18 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.ClzDao">
+    <select id="findAll" resultType="com.example.entity.ClzEntity">
+        select * from t_clz;
+    </select>
+    <insert id="add">
+        insert into t_clz (clzno,clzname) values
+        (#{clzno},#{clzname})
+    </insert>
+    <delete id="remove">
+        delete from t_clz where clzno = #{clzno} and clzname = #{clzname}
+    </delete>
+    <update id="update">
+        update t_clz set clzname = #{clzname} where clzno = #{clzno}
+    </update>
+</mapper>

@@ -1,0 +1,40 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.UserDao">
+    <insert id="add">
+        INSERT INTO `mark5`.`t_user` (`uname`, `phone`, `pwd`, `clzno`,`role`) VALUES (#{uname}, #{phone}, #{pwd},#{clzno}, #{role});
+    </insert>
+    <update id="update">
+        UPDATE `mark5`.`t_user`
+        <set>
+        <if test="uname != null">`uname` = #{uname},</if>
+        <if test="phone != null">`phone` = #{phone},</if>
+        <if test="pwd != null">`pwd` = #{pwd},</if>
+        <if test="clzno != null">`clzno` = #{clzno},</if>
+        <if test="role != null">`role` = #{role},</if>
+        </set>
+                                WHERE (`uid` = #{uid});
+    </update>
+
+
+    <select id="findById" resultType="com.example.entity.UserEntity" parameterType="_int">
+        SELECT * from t_user WHERE uid = #{uid}
+    </select>
+    <select id="findByRole" resultType="com.example.entity.UserEntity">
+        SELECT * from t_user WHERE role = #{role}
+    </select>
+    <select id="findByUserByPhone" resultType="com.example.entity.UserEntity">
+        SELECT * from t_user WHERE phone = #{phone}
+    </select>
+
+
+
+    <delete id="del" parameterType="_int">
+        DELETE FROM `mark5`.`t_user` WHERE (`uid` = #{uid});
+    </delete>
+    <update id="updatePwd">
+        update t_user set pwd = #{pwd} where uid = #{uid}
+    </update>
+
+</mapper>

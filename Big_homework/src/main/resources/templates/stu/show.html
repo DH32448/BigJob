@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>学生</h1>
+<br>
+<br>
+<div th:include="main::nav"></div>
+<div style="display: flex; justify-content: space-between">
+    <div style="display: flex; justify-content: space-between" th:if="${action=='update'}">
+        <form th:action="'/stu/'+ ${action}" method="post" >
+            <label>
+                <input type="hidden" name="uid" th:value="${userEntityUpdate != null ? userEntityUpdate.uid : null}"/>
+            </label>
+            <label>
+                旧密码：<input type="text" name="oldPwd" required>
+            </label><br>
+            <label>
+                新密码：<input type="text" name="newPwd" required>
+            </label><br>
+            <label>
+                新密码验证：<input type="text" name="twoNewPwd" required>
+            </label><br>
+            <label>
+                <input type="submit" value="更改">
+            </label>
+        </form>
+    </div>
+    <div th:if="${action=='course'}">
+        <table th:each="x:${taskEntityList}" border="1">
+            <thead>
+                <tr>
+                    <th>教师编号</th>
+                    <th>教室编号</th>
+                    <th>课程编号</th>
+                </tr>
+            </thead>
+            <tr>
+                <td th:text="${x.tid}"></td>
+                <td th:text="${x.clzno}"></td>
+                <td th:text="${x.cno}"></td>
+            </tr>
+        </table>
+    </div>
+    <div th:if="${action=='score'}">
+        <table border="1">
+            <tr>
+                <th>学号</th>
+                <th>课程编号</th>
+                <th>分数</th>
+                <th>时间</th>
+            </tr>
+            <tr th:each="x:${markEntityList}">
+                <td th:text="${x.sno}"></td>
+                <td th:text="${x.cno}"></td>
+                <td th:text="${x.score}"></td>
+                <td th:text="${x.tpost}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+在项目pom.xml文件处右键单击，弹出菜单中选择Maven，再于新弹出菜单中选择打开setting.xml(如果没有建立过时是创建setting.xml)

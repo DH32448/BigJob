@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--sql语句映射   namespace:接口绑定-->
+<mapper namespace="com.test.mapper.TestMapper">
+    <select id="selectAllUser" resultMap="test2">
+--             resultType="com.test.entity.User">
+--         select * from user
+SELECT *,`group`.name as gname
+FROM `user`
+         LEFT JOIN `group` ON `user`.gid = `group`.gid
+    </select>
+<!--    多对一 map-->
+    <resultMap id="test2" type="User">
+        <id column="id" property="id"/>
+                <result column="name" property="name"/>
+                <result column="age" property="age"/>
+        <association property="group">
+            <id column="gid" property="gid"/>
+            <result column="gname" property="name"/>
+        </association>
+    </resultMap>
+
+<!--    传进来id(int)  #{}：有效防止sql注入  ${直接传值}   占位符-->
+    <select id="selectAllUserById" resultType="User" parameterType="_int">
+        select * from user where id = #{id}
+    </select>
+    <select id="selectAllUserById2" resultType="hashmap" parameterType="_int">
+        select * from user where id = #{id}
+    </select>
+    <select id="selectUserByIdAndAge" resultType="User">
+        select *
+        from user
+        where id = #{id} and age &lt;= #{age};
+    </select>
+<!--    <resultMap id="test" type="User">-->
+<!--        <id column="id" property="id"/>-->
+<!--        <result column="name" property="username"/>-->
+<!--        <result column="age" property="age"/>-->
+<!--    </resultMap>-->
+
+    <select id="selectUserByAge" resultType="User">
+        select *
+        from user
+        where id = #{id} and age >= #{age};
+    </select>
+
+    <select id="selectAllUserById3" resultMap="test">
+        select * from user where id = #{id}
+    </select>
+    <resultMap id="test" type="User">
+        <constructor>
+            <idArg column="id" javaType="_int"/>
+            <arg column="name" javaType="String"/>
+            <arg column="age" javaType="_int"/>
+        </constructor>
+    </resultMap>
+
+<!--一对一例子-->
+<!--    <select id="selectAllUserById4" resultMap="test2">-->
+<!--        select * from user left join user_detall on user.id = user_detall.id where user.id =  #{id}-->
+<!--    </select>-->
+<!--    <resultMap id="test2" type="User">-->
+<!--        <id column="id" property="id"/>-->
+<!--        <result column="name" property="name"/>-->
+<!--        <result column="age" property="age"/>-->
+<!--&lt;!&ndash;        一对一映射关系  &ndash;&gt;-->
+<!--&lt;!&ndash;        第一种  嵌套&ndash;&gt;-->
+<!--        <association property="detall">-->
+<!--            <id column="id" property="id"/>-->
+<!--            <result column="description" property="description"/>-->
+<!--            <result column="register" property="register"/>-->
+<!--            <result column="avatar" property="avatar"/>-->
+<!--        </association>-->
+<!--    </resultMap>-->
+
+<!--    <select id="selectAllUserById5" resultMap="test3">-->
+<!--        select * from user where id =  #{id}-->
+<!--    </select>-->
+<!--    <resultMap id="test3" type="User">-->
+<!--        <id column="id" property="id"/>-->
+<!--        <result column="name" property="name"/>-->
+<!--        <result column="age" property="age"/>-->
+<!--        &lt;!&ndash;        一对一映射关系  &ndash;&gt;-->
+<!--        &lt;!&ndash;        第一种  嵌套  第二种&ndash;&gt;-->
+<!--            <association property="detall" column="id" select="selectAllUserDetallById5"/>-->
+<!--    </resultMap>-->
+<!--    <select id="selectAllUserDetallById5" resultType="userDetall">-->
+<!--        select *-->
+<!--        from user_detall where id =  #{id};-->
+<!--    </select>-->
+<!--    一对多-->
+    <select id="selectAllUserById6" resultMap="test4">
+        select * from user left join book on user.id = book.uid where id =  #{id}
+    </select>
+    <resultMap id="test4" type="User">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="age" property="age"/>
+<!--        <collection property="book" ofType="Book">-->
+<!--            <id column="bid" property="bid"/>-->
+<!--            <result property="title" column="title"/>-->
+<!--            <result property="uid" column="uid"/>-->
+<!--        </collection>-->
+<!--        <collection property="book" column="id" select="bookBookByUid"/>-->
+    </resultMap>
+
+    <select id="bookBookByUid" resultType="book">
+        select *
+        from book where uid = #{uid};
+    </select>
+
+<!--    多对一-->
+
+</mapper>

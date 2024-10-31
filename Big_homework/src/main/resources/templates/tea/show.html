@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>教师</h1>
+<br>
+<br>
+<div th:include="main::nav"></div>
+<div style="display: flex; justify-content: space-between">
+
+    <div>
+        <a th:if="${taskEntityList == null and action == 'score'}" href="/tea/go2clz">返回</a>
+    </div>
+    <div th:if="${taskEntityList != null and action == 'score'}">
+    <table border="1">
+            <thead>
+                <tr>
+                    <th>kid</th>
+                    <th>tid</th>
+                    <th>clzno</th>
+                    <th>cno</th>
+                </tr>
+            </thead>
+            <tr th:each="x:${taskEntityList}">
+                <td th:text="${x.kid}"></td>
+                <td th:text="${x.tid}"></td>
+                <td th:text="${x.clzno}"></td>
+                <td th:text="${x.cno}"></td>
+                <td><a th:href="'/tea/go2score/'+${x.clzno}+'/'+${x.cno}">查看当前班级课程登分情况</a></td>
+            </tr>
+        </table>
+    </div>
+    <div style="display: flex; justify-content: space-between" th:if="${action=='update'}">
+        <form th:action="'/stu/'+ ${action}" method="post" >
+            <label>
+                <input type="hidden" name="uid" th:value="${userEntityUpdate != null ? userEntityUpdate.uid : null}"/>
+            </label>
+            <label>
+                旧密码：<input type="text" name="oldPwd" required>
+            </label><br>
+            <label>
+                新密码：<input type="text" name="newPwd" required>
+            </label><br>
+            <label>
+                新密码验证：<input type="text" name="twoNewPwd" required>
+            </label><br>
+            <label>
+                <input type="submit" value="更改">
+            </label>
+        </form>
+    </div>
+    <div th:if="${action=='score' and markEntityList!=null}">
+        <table>
+            <tr>
+                <th>id</th>
+                <th>班级编号</th>
+                <th>学号</th>
+                <th>学生姓名</th>
+                <th>课程编号</th>
+                <th>课程名称</th>
+                <th>课程分数</th>
+                <th>操作</th>
+            </tr>
+            <form method="POST"   th:each="x:${markEntityListScore2}" th:action="${x.markEntity.id == 0} ? '/tea/addscore' : '/tea/updatescore'">
+                    <tr style="width: 500px">
+                        <td><input type="text" name="id" th:value="${x.markEntity.id}" readonly placeholder="ID" /></td>
+                        <td><input type="text" name="clzno" th:value="${x.clzno}" readonly placeholder="班级号" /></td>
+                        <td><input type="text" name="phone" th:value="${x.phone}" placeholder="电话号码" /></td>
+                        <td><input type="text" name="uname" th:value="${x.uname}" readonly placeholder="用户名" /></td>
+                        <td><input type="text"  name="cno" th:value="${x.courseEntity.cno != null ? x.courseEntity.cno : ' '}" /></td>
+                        <td><input type="text" name="cname"   th:value="${x.courseEntity.cname != null ? x.courseEntity.cname : ' '}" /></td>
+
+                        <td><input type="number" name="score" th:value="${x.markEntity.score}" placeholder="分数" required/></td>
+                        <td>
+                            <input type="submit" value="修改" th:if="${x.markEntity.id !=0}" />
+                            <input type="submit" value="添加" th:if="${x.markEntity.id ==0}" />
+                        </td>
+                    </tr>
+            </form>
+
+
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

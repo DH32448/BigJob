@@ -1,0 +1,5 @@
+方案一：升级JDK版本至17或更高
+此处涉及的JDK下载安装、环境变量配置就不再赘述。
+
+方案二：替换Spring初始化的源
+Spring Initializr创建项目会访问https://start.spring.io/，只需要将其替换为阿里云源https://start.aliyun.com/去创建，此时Java配置项就可以选择8。

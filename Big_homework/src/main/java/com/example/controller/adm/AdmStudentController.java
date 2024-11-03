@@ -1,7 +1,9 @@
 package com.example.controller.adm;
 
+import com.example.dao.ClzDao;
 import com.example.dao.LargeFileDao;
 import com.example.dao.UserDao;
+import com.example.entity.ClzEntity;
 import com.example.entity.CourseEntity;
 import com.example.entity.Largefile;
 import com.example.entity.UserEntity;
@@ -32,6 +34,8 @@ public class AdmStudentController {
     UserDao userDao;
     @Autowired
     LargeFileDao largeFileDao;
+    @Autowired
+    ClzDao clzDao;
     public AdmStudentController() {
         System.out.println("AdmStudentController 构造");
     }
@@ -47,6 +51,8 @@ public class AdmStudentController {
     @RequestMapping("/go2add")
     public String go2add(Model model) {
         model.addAttribute("action","add");
+        List<ClzEntity> clzAll = clzDao.findAll();
+        model.addAttribute("clzAll", clzAll);
         return "forward:/adm/student/go2show";
     }
     @PostMapping("/add")
@@ -63,14 +69,13 @@ public class AdmStudentController {
                 if (userEntity.getPic() != null) {
                     largeFileDao.delete(userEntity.getPic());
                 }
-
                 // 上传新照片
                 Largefile largefile = new Largefile();
                 largefile.setId(UUID.randomUUID().toString());
-                largefile.setFilename(image.getOriginalFilename()); // 使用 setFileName 方法
+                largefile.setFilename(image.getOriginalFilename());
                 largefile.setContent(image.getBytes());
-                System.out.println(largeFileDao.add(largefile));
                 userEntity.setPic(largefile.getId());
+                System.out.println(largeFileDao.add(largefile));
             } catch (IOException e) {
                 model.addAttribute("error", "文件上传失败！");
                 return "forward:/adm/student/go2add";
@@ -100,7 +105,6 @@ public class AdmStudentController {
     public String update(UserEntity userEntity,Model model,@RequestParam("image") MultipartFile image) {
         userEntity.setRole(1);
         if (!image.isEmpty()) {
-            System.out.println("有招");
             try {
                 // 检查并删除旧照片
                 if (userEntity.getPic() != null) {
@@ -110,7 +114,7 @@ public class AdmStudentController {
                 // 上传新照片
                 Largefile largefile = new Largefile();
                 largefile.setId(UUID.randomUUID().toString());
-                largefile.setFilename(image.getOriginalFilename()); // 使用 setFileName 方法
+                largefile.setFilename(image.getOriginalFilename());
                 largefile.setContent(image.getBytes());
                 System.out.println(largeFileDao.add(largefile));
                 userEntity.setPic(largefile.getId());

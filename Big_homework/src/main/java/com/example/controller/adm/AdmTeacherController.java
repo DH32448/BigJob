@@ -1,6 +1,8 @@
 package com.example.controller.adm;
 
+import com.example.dao.LargeFileDao;
 import com.example.dao.UserDao;
+import com.example.entity.Largefile;
 import com.example.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,10 +10,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author HJX
@@ -22,6 +28,8 @@ import java.util.List;
 public class AdmTeacherController {
     @Autowired
     UserDao userDao;
+    @Autowired
+    LargeFileDao largeFileDao;
     public AdmTeacherController() {
         System.out.println("AdmTeacherController 构造");
     }
@@ -41,11 +49,30 @@ public class AdmTeacherController {
         return "forward:/adm/teacher/go2show";
     }
     @PostMapping("/add")
-    public String add(UserEntity userEntity, Model model) {
+    public String add(UserEntity userEntity, Model model,@RequestParam("image") MultipartFile image) {
         userEntity.setRole(5);
         if (userEntity.getUname() == null || userEntity.getUname().isEmpty()) {
             model.addAttribute("error", "添加信息不能为空！");
             return "forward:/adm/teacher/go2add";
+        }
+        if (!image.isEmpty()) {
+            try {
+                // 检查并删除旧照片
+                if (userEntity.getPic() != null) {
+                    largeFileDao.delete(userEntity.getPic());
+                }
+
+                // 上传新照片
+                Largefile largefile = new Largefile();
+                largefile.setId(UUID.randomUUID().toString());
+                largefile.setFilename(image.getOriginalFilename());
+                largefile.setContent(image.getBytes());
+                System.out.println(largeFileDao.add(largefile));
+                userEntity.setPic(largefile.getId());
+            } catch (IOException e) {
+                model.addAttribute("error", "文件上传失败！");
+                return "forward:/adm/student/go2show";
+            }
         }
         userDao.add(userEntity);
         model.addAttribute("msg", "添加成功！！");
@@ -68,11 +95,29 @@ public class AdmTeacherController {
     }
 
     @PostMapping("/update")
-    public String update(UserEntity userEntity, Model model) {
+    public String update(UserEntity userEntity, Model model,@RequestParam("image") MultipartFile image) {
         userEntity.setRole(5);
+        if (!image.isEmpty()) {
+            try {
+                // 检查并删除旧照片
+                if (userEntity.getPic() != null) {
+                    largeFileDao.delete(userEntity.getPic());
+                }
+
+                // 上传新照片
+                Largefile largefile = new Largefile();
+                largefile.setId(UUID.randomUUID().toString());
+                largefile.setFilename(image.getOriginalFilename());
+                largefile.setContent(image.getBytes());
+                System.out.println(largeFileDao.add(largefile));
+                userEntity.setPic(largefile.getId());
+            } catch (IOException e) {
+                model.addAttribute("error", "文件上传失败！");
+                return "forward:/adm/student/go2show";
+            }
+        }
         userDao.update(userEntity);
         model.addAttribute("msg", "更新成功！！");
-
         return "forward:/adm/teacher/go2show";
     }
 }

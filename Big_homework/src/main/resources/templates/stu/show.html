@@ -30,7 +30,7 @@
         </form>
     </div>
     <div th:if="${action=='course'}">
-        <table th:each="x:${taskEntityList}" border="1">
+        <table  border="1">
             <thead>
                 <tr>
                     <th>教师编号</th>
@@ -38,7 +38,7 @@
                     <th>课程编号</th>
                 </tr>
             </thead>
-            <tr>
+            <tr th:each="x:${taskEntityList}">
                 <td th:text="${x.tid}"></td>
                 <td th:text="${x.clzno}"></td>
                 <td th:text="${x.cno}"></td>

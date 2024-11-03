@@ -17,7 +17,6 @@
                 <th>名称</th>
                 <th>手机号</th>
                 <th>密码</th>
-                <th>班级编号</th>
                 <th>头像</th>
             </tr>
             <tr th:each="x:${userEntityListTeacher}">
@@ -25,7 +24,6 @@
                 <td th:text="${x.uname}"></td>
                 <td th:text="${x.phone}"></td>
                 <td th:text="${x.pwd}"></td>
-                <td th:text="${x.clzno}"></td>
                 <td><img style="width: 25%;max-width: 200px;min-width: 50px" th:if="${session.user != null}" th:src="'/home/showimg/'+${x.getPic()}" alt="头像未设置"></td>
                 <td><a th:href="'/adm/teacher/remove?uid=' + ${x.uid} + '&uname=' + ${x.phone}">删除</a></td>
                 <td><a th:href="'/adm/teacher/go2update?uid=' + ${x.uid} + '&uname=' + ${x.phone}">更改</a></td>
@@ -35,7 +33,7 @@
     <div>
         <a href="/adm/teacher/go2add">添加教师</a>
         <div th:if="${action!=null}">
-            <form th:action="'/adm/teacher/'+ ${action}" method="post">
+            <form th:action="'/adm/teacher/'+ ${action}" method="post" enctype="multipart/form-data">
                 <label th:if="${action=='update'}">
                 <input type="hidden" name="uid" th:value="${userEntityUpdate != null ? userEntityUpdate.uid : null}"/>
                 </label>
@@ -47,9 +45,6 @@
                 </label><br>
                 <label>
                     密码：<input type="text" name="pwd" th:value="${userEntityUpdate != null ? userEntityUpdate.pwd : ''}" required>
-                </label><br>
-                <label>
-                    班级编号：<input type="text" name="clzno" th:value="${userEntityUpdate != null ? userEntityUpdate.clzno : ''}" required>
                 </label><br>
                 <span><img style="width: 25%;max-width: 200px;min-width: 50px" th:if="${userEntityUpdate != null}" th:src="'/home/showimg/'+${userEntityUpdate.pic}" alt="头像未设置"></span><br><br>
                 <label>头像： <input type="file" name="image"></label><br>

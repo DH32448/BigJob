@@ -104,11 +104,7 @@ class BigHomeworkApplicationTests {
         MarkEntity markEntity = markDao.findBySnoCno(map);
         System.out.println(markEntity);
     }
-    @Test
-    void findBySnoTask() {
-        List<MarkEntity> list = markDao.findByClzno("B02");
-        list.forEach(System.out::println);
-    }
+
     @Test
     void updateMarkTask(){
         MarkEntity markEntity = new MarkEntity();

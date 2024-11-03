@@ -49,7 +49,10 @@
                     密码：<input type="text" name="pwd" th:value="${userEntityUpdate != null ? userEntityUpdate.pwd : ''}" required>
                 </label><br>
                 <label>
-                    班级编号：<input type="text" name="clzno" th:value="${userEntityUpdate != null ? userEntityUpdate.clzno : ''}" required>
+                    班级编号：
+                    <select name="clzno">
+                        <option th:each="x:${clzAll}" th:value="${x.clzno}" th:text="${x.clzno}"></option>
+                    </select>
                 </label><br>
                 <span><img style="width: 25%;max-width: 200px;min-width: 50px" th:if="${userEntityUpdate != null}" th:src="'/home/showimg/'+${userEntityUpdate.pic}" alt="头像未设置"></span><br><br>
                 <label>头像： <input type="file" name="image"></label><br>

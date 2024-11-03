@@ -8,22 +8,14 @@
     <select id="findBySno" resultType="com.example.entity.MarkEntity">
         select * from t_mark where sno = #{sno}
     </select>
-    <select id="findByClzno" resultMap="findByClznoMap">
-        SELECT *
-        FROM t_user u
-                 LEFT JOIN t_mark m ON u.phone = m.sno
-                 LEFT JOIN t_course c ON m.cno = c.cno
-        WHERE u.role = 1
-          AND u.clzno = 'B02'
-          and c.cno is NULL
-    </select>
+
     <select id="findByClzno2"  resultMap="findByClznoMap2">
         select * from t_user u
-                          LEFT JOIN t_clz c   on c.clzno = u.clzno
-                          LEFT JOIN t_task t on t.clzno = u.clzno
-                          LEFT JOIN t_course co on co.cno = t.cno
-                          LEFT JOIN t_mark m on m.cno = t.cno
-        where t.cno = #{cno} AND u.role=1
+                          LEFT JOIN t_clz c   on c.clzno = u.clzno -- 学生的班级
+                          LEFT JOIN t_task t on t.clzno = c.clzno -- 学生已安排的课程
+                          LEFT JOIN t_course co on co.cno = t.cno -- 课程信息
+                          LEFT JOIN t_mark m on m.sno =  u.phone AND m.cno = co.cno -- 成绩
+        where t.cno = #{cno} AND u.role=1 AND c.clzno = #{clzno}
     </select>
     <resultMap id="findByClznoMap2" type="com.example.entity.UserEntity">
         <id column="uid" property="uid"/>
@@ -74,9 +66,8 @@
 
     <update id="update" parameterType="com.example.entity.MarkEntity">
         UPDATE t_mark
-        SET score = #{score},tpost = #{tpost},tid = #{tid},
-        cno = #{cno}
-        WHERE   id = #{id}
+        SET score = #{score},tpost = #{tpost},tid = #{tid}
+        WHERE   id = #{id} AND cno = #{cno} AND sno = #{sno}
     </update>
     <insert id="add" parameterType="com.example.entity.MarkEntity">
         insert into t_mark

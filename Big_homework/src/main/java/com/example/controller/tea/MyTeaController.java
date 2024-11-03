@@ -60,7 +60,6 @@ public class MyTeaController {
             model.addAttribute("error", "新密码和确认密码不一致");
             return "forward:/tea/update";
         }
-
         userEntity.setPwd(newPwd);
         userDao.update(userEntity);  // 更新密码
         model.addAttribute("msg", "密码更新成功");
@@ -77,31 +76,9 @@ public class MyTeaController {
     }
     @RequestMapping("/go2score/{clzno}/{cno}")
     public String go2score(Model model, @PathVariable("clzno") String clzno, @PathVariable("cno") String cno) {
-        //发送课程
-        //List<CourseEntity> go2addTeaCourse = courseDao.findAll();
-        //model.addAttribute("go2addTeaCourse", go2addTeaCourse);
-
-
-
-        System.out.println(cno);
-
-
         model.addAttribute("action", "score");
-        //未登分
-
-        List<MarkEntity> markEntityList = markDao.findByClzno(clzno);
-        //已登分
-
-
-        List<UserEntity> markEntityListScore2 = markDao.findByClzno2(cno);
-        markEntityListScore2.forEach(System.out::println);
+        List<UserEntity> markEntityListScore2 = markDao.findByClzno2(cno,clzno);
         model.addAttribute("markEntityListScore2", markEntityListScore2);
-
-
-        List<MarkEntity> markEntityListScore = markDao.findByClznoCno(clzno, cno);
-
-
-        model.addAttribute("markEntityList", markEntityList);
         return "/tea/show";
     }
 
@@ -125,15 +102,15 @@ public class MyTeaController {
     }
     @PostMapping("/updatescore")
     public String updatescore(MarkEntity markEntity,
-                              String clzno, Model model,HttpSession session) {
+                              String clzno,String cno, String phone,Model model,HttpSession session) {
         model.addAttribute("action", "updatescore");
         UserEntity user = (UserEntity) session.getAttribute("user");
-
-
         markEntity.setTpost(new Date());
         markEntity.setTid(user.getUid());
+        markEntity.setCno(cno);
+        markEntity.setSno(phone);
         markDao.update(markEntity);
-
+        System.out.println(markEntity + "==============");
         return "forward:/tea/go2score/"+clzno+"/"+markEntity.getCno();
     }
 }

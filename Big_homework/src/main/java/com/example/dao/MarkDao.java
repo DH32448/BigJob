@@ -14,10 +14,9 @@ public interface MarkDao {
     public MarkEntity findBySnoCno(Map<String, Object> map);
 
     public List<MarkEntity> findBySno(String sno);
+    //查询
 
-    public List<MarkEntity> findByClzno(String sno);
-
-    public List<UserEntity> findByClzno2(String sno);
+    public List<UserEntity> findByClzno2(@Param("cno") String cno,@Param("clzno") String clzno);
 
     //查找班级指定课程分数
     List<MarkEntity> findByClznoCno(@Param("clzno")String clzno, @Param("cno")String cno);

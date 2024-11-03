@@ -45,7 +45,7 @@ public class MyStuController {
     }
 
     @PostMapping("/update")
-    public String pwd(String uid, String oldPwd, String newPwd, String twoNewPwd, Model model, HttpSession session) {
+    public String pwd(String oldPwd, String newPwd, String twoNewPwd, Model model, HttpSession session) {
         UserEntity userEntity = (UserEntity) session.getAttribute("user");
 
         if (userEntity == null || !userEntity.getPwd().equals(oldPwd)) {

@@ -13,6 +13,7 @@
         <if test="pwd != null">`pwd` = #{pwd},</if>
         <if test="clzno != null">`clzno` = #{clzno},</if>
         <if test="role != null">`role` = #{role},</if>
+        <if test="pic != null">`pic` = #{pic},</if>
         </set>
                                 WHERE (`uid` = #{uid});
     </update>
@@ -33,11 +34,6 @@
         <result column="clzno" property="clzno"/>
         <result column="role" property="role"/>
         <result column="pic" property="pic"/>
-        <association property="largefile">
-            <id column="id" property="id"/>
-            <result property="filename" column="filename"/>
-            <result property="content" column="content"/>
-        </association>
     </resultMap>
 
 

@@ -25,108 +25,152 @@ import java.util.UUID;
 
 /**
  * @author HJX
- * # 学生管理
+ * 学生管理控制器
+ * 用于处理与学生相关的请求，包括显示学生列表、添加、删除和更新学生信息。
  */
 @Controller
 @RequestMapping("/adm/student")
 public class AdmStudentController {
+
     @Autowired
-    UserDao userDao;
+    private UserDao userDao; // 注入用户数据访问对象
     @Autowired
-    LargeFileDao largeFileDao;
+    private LargeFileDao largeFileDao; // 注入大文件数据访问对象
     @Autowired
-    ClzDao clzDao;
+    private ClzDao clzDao; // 注入班级数据访问对象
+
     public AdmStudentController() {
         System.out.println("AdmStudentController 构造");
     }
+
+    /**
+     * 显示学生列表
+     * @param model 用于传递数据到视图
+     * @param session 用于获取当前用户的会话信息
+     * @return 视图名称
+     */
     @RequestMapping("/go2show")
     public String go2show(Model model, HttpSession session) {
-        UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user == null) {return "main";}
-        if (user.getRole() != 9) {return "main";}
-        List<UserEntity> userEntityListStudent = userDao.findByRole(1);
-        model.addAttribute("userEntityListStudent", userEntityListStudent);
-        return "/adm/student/show";
+        UserEntity user = (UserEntity) session.getAttribute("user"); // 获取当前用户
+        if (user == null) { // 用户未登录
+            return "main"; // 重定向到主页面
+        }
+        if (user.getRole() != 9) { // 用户角色不是管理员
+            return "main"; // 重定向到主页面
+        }
+        List<UserEntity> userEntityListStudent = userDao.findByRole(1); // 查询所有学生
+        model.addAttribute("userEntityListStudent", userEntityListStudent); // 将学生列表添加到模型
+        return "/adm/student/show"; // 返回学生列表视图
     }
+
+    /**
+     * 跳转到添加学生页面
+     * @param model 用于传递数据到视图
+     * @return 视图名称
+     */
     @RequestMapping("/go2add")
     public String go2add(Model model) {
-        model.addAttribute("action","add");
-        List<ClzEntity> clzAll = clzDao.findAll();
-        model.addAttribute("clzAll", clzAll);
-        return "forward:/adm/student/go2show";
+        model.addAttribute("action", "add"); // 设置操作为添加
+        List<ClzEntity> clzAll = clzDao.findAll(); // 查询所有班级
+        model.addAttribute("clzAll", clzAll); // 将班级列表添加到模型
+        return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }
+
+    /**
+     * 添加学生
+     * @param userEntity 待添加的学生实体
+     * @param model 用于传递数据到视图
+     * @param image 上传的学生照片
+     * @return 视图名称
+     */
     @PostMapping("/add")
     public String add(UserEntity userEntity, Model model, @RequestParam("image") MultipartFile image) {
-        userEntity.setRole(1);
-        System.out.println(userEntity);
+        userEntity.setRole(1); // 设置学生角色
+        System.out.println(userEntity); // 打印学生实体信息
         if (userEntity.getUname() == null || userEntity.getUname().isEmpty()) {
-            model.addAttribute("error", "添加信息不能为空！");
-            return "forward:/adm/student/go2add";
+            model.addAttribute("error", "添加信息不能为空！"); // 添加错误信息
+            return "forward:/adm/student/go2add"; // 转发到添加学生页面
         }
         if (!image.isEmpty()) {
             try {
                 // 检查并删除旧照片
                 if (userEntity.getPic() != null) {
-                    largeFileDao.delete(userEntity.getPic());
+                    largeFileDao.delete(userEntity.getPic()); // 删除旧照片
                 }
                 // 上传新照片
                 Largefile largefile = new Largefile();
-                largefile.setId(UUID.randomUUID().toString());
-                largefile.setFilename(image.getOriginalFilename());
-                largefile.setContent(image.getBytes());
-                userEntity.setPic(largefile.getId());
-                System.out.println(largeFileDao.add(largefile));
+                largefile.setId(UUID.randomUUID().toString()); // 生成唯一ID
+                largefile.setFilename(image.getOriginalFilename()); // 设置文件名
+                largefile.setContent(image.getBytes()); // 设置文件内容
+                userEntity.setPic(largefile.getId()); // 设置学生照片ID
+                System.out.println(largeFileDao.add(largefile)); // 添加照片
             } catch (IOException e) {
-                model.addAttribute("error", "文件上传失败！");
-                return "forward:/adm/student/go2add";
+                model.addAttribute("error", "文件上传失败！"); // 添加错误信息
+                return "forward:/adm/student/go2add"; // 转发到添加学生页面
             }
         }
-        userDao.add(userEntity);
-        model.addAttribute("msg", "添加成功！！");
-
-        return "forward:/adm/student/go2show";
+        userDao.add(userEntity); // 添加学生
+        model.addAttribute("msg", "添加成功！！"); // 添加成功信息
+        return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }
+
+    /**
+     * 删除学生
+     * @param userEntity 待删除的学生实体
+     * @param model 用于传递数据到视图
+     * @return 视图名称
+     */
     @GetMapping("/remove")
-    public String remove(UserEntity userEntity,Model model) {
-        userDao.del(userEntity.getUid());
-        model.addAttribute("msg", "删除成功！！");
-
-        return "forward:/adm/student/go2show";
+    public String remove(UserEntity userEntity, Model model) {
+        userDao.del(userEntity.getUid()); // 删除学生
+        model.addAttribute("msg", "删除成功！！"); // 添加成功信息
+        return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }
+
+    /**
+     * 跳转到更新学生页面
+     * @param model 用于传递数据到视图
+     * @param userEntity 待更新的学生实体
+     * @return 视图名称
+     */
     @GetMapping("/go2update")
     public String go2update(Model model, UserEntity userEntity) {
-        model.addAttribute("action", "update");
-        userEntity = userDao.findById(userEntity.getUid());
-        model.addAttribute("userEntityUpdate", userEntity);
-        return "forward:/adm/student/go2show";
+        model.addAttribute("action", "update"); // 设置操作为更新
+        userEntity = userDao.findById(userEntity.getUid()); // 查询学生信息
+        model.addAttribute("userEntityUpdate", userEntity); // 将学生信息添加到模型
+        return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }
 
+    /**
+     * 更新学生
+     * @param userEntity 待更新的学生实体
+     * @param model 用于传递数据到视图
+     * @param image 上传的学生照片
+     * @return 视图名称
+     */
     @PostMapping("/update")
-    public String update(UserEntity userEntity,Model model,@RequestParam("image") MultipartFile image) {
-        userEntity.setRole(1);
+    public String update(UserEntity userEntity, Model model, @RequestParam("image") MultipartFile image) {
+        userEntity.setRole(1); // 设置学生角色
         if (!image.isEmpty()) {
             try {
                 // 检查并删除旧照片
                 if (userEntity.getPic() != null) {
-                    largeFileDao.delete(userEntity.getPic());
+                    largeFileDao.delete(userEntity.getPic()); // 删除旧照片
                 }
-
                 // 上传新照片
                 Largefile largefile = new Largefile();
-                largefile.setId(UUID.randomUUID().toString());
-                largefile.setFilename(image.getOriginalFilename());
-                largefile.setContent(image.getBytes());
-                System.out.println(largeFileDao.add(largefile));
-                userEntity.setPic(largefile.getId());
+                largefile.setId(UUID.randomUUID().toString()); // 生成唯一ID
+                largefile.setFilename(image.getOriginalFilename()); // 设置文件名
+                largefile.setContent(image.getBytes()); // 设置文件内容
+                System.out.println(largeFileDao.add(largefile)); // 添加照片
+                userEntity.setPic(largefile.getId()); // 设置学生照片ID
             } catch (IOException e) {
-                model.addAttribute("error", "文件上传失败！");
-                return "forward:/adm/student/go2show";
+                model.addAttribute("error", "文件上传失败！"); // 添加错误信息
+                return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
             }
         }
-        userDao.update(userEntity);
-        model.addAttribute("msg", "更新成功！！");
-
-        return "forward:/adm/student/go2show";
+        userDao.update(userEntity); // 更新学生
+        model.addAttribute("msg", "更新成功！！"); // 添加成功信息
+        return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }
-
 }

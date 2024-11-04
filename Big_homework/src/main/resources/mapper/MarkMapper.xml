@@ -66,8 +66,19 @@
 
     <update id="update" parameterType="com.example.entity.MarkEntity">
         UPDATE t_mark
-        SET score = #{score},tpost = #{tpost},tid = #{tid}
-        WHERE   id = #{id} AND cno = #{cno} AND sno = #{sno}
+        <set>
+            <if test="score != null">
+                score = #{score},
+            </if>
+            <if test="tpost != null">
+                tpost = #{tpost},
+            </if>
+            <if test="tid != null">
+                tid = #{tid},
+            </if>
+        </set>
+        WHERE id = #{id} AND cno = #{cno} AND sno = #{sno}
+
     </update>
     <insert id="add" parameterType="com.example.entity.MarkEntity">
         insert into t_mark

@@ -1,0 +1,14 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.LargeFileDao">
+    <insert id="add">
+        insert into t_largefile (id,filename,content)values (#{id}, #{filename},#{content})
+    </insert>
+    <select id="findOne" resultType="com.example.entity.Largefile">
+        select id,filename,content from t_largefile where id=#{id}
+    </select>
+    <delete id="delete">
+        delete from t_largefile where id=#{id}
+    </delete>
+</mapper>

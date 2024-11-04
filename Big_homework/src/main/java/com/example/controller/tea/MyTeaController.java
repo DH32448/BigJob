@@ -44,7 +44,6 @@ public class MyTeaController {
         model.addAttribute("action", "update");
         return "/tea/show";  // 返回显示密码更新页面
     }
-    //登分
     @PostMapping("/update")
     public String pwd(String uid,String oldPwd, String newPwd, String twoNewPwd ,Model model, HttpSession session) {
         UserEntity userEntity = (UserEntity) session.getAttribute("user");

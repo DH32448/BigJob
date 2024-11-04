@@ -1,11 +1,8 @@
-package com.example.dao;
+package com.example.Service;
 
 import com.example.entity.Largefile;
-import org.apache.ibatis.annotations.Mapper;
 
-@Mapper
-public interface LargeFileDao {
-
+public interface LargefileService {
     public Integer add(Largefile largefile);
 
     public Largefile findOne(String id);

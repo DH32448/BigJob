@@ -1,15 +1,10 @@
-package com.example.dao;
+package com.example.Service;
 
 import com.example.entity.CourseEntity;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-/**
- * @author HJX
- */
-@Mapper
-public interface CourseDao {
+public interface CourseService {
     List<CourseEntity> findAll();
     int add(CourseEntity courseEntity);
     int remove(CourseEntity courseEntity);

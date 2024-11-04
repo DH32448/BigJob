@@ -1,7 +1,6 @@
 package com.example.controller.adm;
 
-import com.example.dao.CourseDao;
-import com.example.entity.ClzEntity;
+import com.example.Service.CourseService;
 import com.example.entity.CourseEntity;
 import com.example.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -23,9 +21,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/adm/course")
 public class AdmCourseController {
-
     @Autowired
-    private CourseDao courseDao; // 注入课程数据访问对象
+    private CourseService courseService;
+
 
     public AdmCourseController() {
         System.out.println("AdmCourseController 构造");
@@ -46,7 +44,7 @@ public class AdmCourseController {
         if (user.getRole() != 9) { // 用户角色不是管理员
             return "main"; // 重定向到主页面
         }
-        List<CourseEntity> courseEntityList = courseDao.findAll(); // 查询所有课程
+        List<CourseEntity> courseEntityList = courseService.findAll(); // 查询所有课程
         model.addAttribute("courseEntityList", courseEntityList); // 将课程列表添加到模型
         return "adm/course/show"; // 返回课程列表视图
     }
@@ -76,7 +74,7 @@ public class AdmCourseController {
             return "forward:/adm/course/go2add"; // 转发到添加课程页面
         }
         try {
-            courseDao.add(courseEntity); // 添加课程
+            courseService.add(courseEntity); // 添加课程
             model.addAttribute("msg", "添加成功！！"); // 添加成功信息
         } catch (Exception e) {
             model.addAttribute("error", "课程已存在"); // 添加错误信息
@@ -94,7 +92,7 @@ public class AdmCourseController {
      */
     @GetMapping("/remove")
     public String remove(CourseEntity courseEntity, Model model) {
-        courseDao.remove(courseEntity); // 删除课程
+        courseService.remove(courseEntity); // 删除课程
         model.addAttribute("msg", "删除成功！！"); // 添加成功信息
         return "forward:/adm/course/go2show"; // 转发到显示课程列表页面
     }
@@ -120,7 +118,7 @@ public class AdmCourseController {
      */
     @PostMapping("/update")
     public String update(CourseEntity courseEntity, Model model) {
-        courseDao.update(courseEntity); // 更新课程
+        courseService.update(courseEntity); // 更新课程
         model.addAttribute("msg", "更新成功！！"); // 添加成功信息
         return "forward:/adm/course/go2show"; // 转发到显示课程列表页面
     }

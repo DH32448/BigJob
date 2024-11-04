@@ -1,7 +1,7 @@
 package com.example.controller.adm;
 
+import com.example.Service.UserService;
 import com.example.dao.LargeFileDao;
-import com.example.dao.UserDao;
 import com.example.entity.Largefile;
 import com.example.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
@@ -29,9 +28,9 @@ import java.util.UUID;
 public class AdmTeacherController {
 
     @Autowired
-    private UserDao userDao; // 注入用户数据访问对象
+    private UserService userService; // 注入用户数据访问对象
     @Autowired
-    private LargeFileDao largeFileDao; // 注入大文件数据访问对象
+    private LargeFileDao largeFileDao;
 
     public AdmTeacherController() {
         System.out.println("AdmTeacherController 构造");
@@ -52,7 +51,7 @@ public class AdmTeacherController {
         if (user.getRole() != 9) { // 用户角色不是管理员
             return "main"; // 重定向到主页面
         }
-        List<UserEntity> userEntityListTeacher = userDao.findByRole(5); // 查询所有教师
+        List<UserEntity> userEntityListTeacher = userService.findByRole(5); // 查询所有教师
         model.addAttribute("userEntityListTeacher", userEntityListTeacher); // 将教师列表添加到模型
         return "/adm/teacher/show"; // 返回教师列表视图
     }
@@ -101,7 +100,7 @@ public class AdmTeacherController {
                 return "forward:/adm/teacher/go2add"; // 转发到添加教师页面
             }
         }
-        userDao.add(userEntity); // 添加教师
+        userService.add(userEntity); // 添加教师
         model.addAttribute("msg", "添加成功！！"); // 添加成功信息
         return "forward:/adm/teacher/go2show"; // 转发到显示教师列表页面
     }
@@ -114,7 +113,7 @@ public class AdmTeacherController {
      */
     @GetMapping("/remove")
     public String remove(UserEntity userEntity, Model model) {
-        userDao.del(userEntity.getUid()); // 删除教师
+        userService.del(userEntity.getUid()); // 删除教师
         model.addAttribute("msg", "删除成功！！"); // 添加成功信息
         return "forward:/adm/teacher/go2show"; // 转发到显示教师列表页面
     }
@@ -128,7 +127,7 @@ public class AdmTeacherController {
     @GetMapping("/go2update")
     public String go2update(Model model, UserEntity userEntity) {
         model.addAttribute("action", "update"); // 设置操作为更新
-        userEntity = userDao.findById(userEntity.getUid()); // 查询教师信息
+        userEntity = userService.findById(userEntity.getUid()); // 查询教师信息
         model.addAttribute("userEntityUpdate", userEntity); // 将教师信息添加到模型
         return "forward:/adm/teacher/go2show"; // 转发到显示教师列表页面
     }
@@ -162,7 +161,7 @@ public class AdmTeacherController {
                 return "forward:/adm/teacher/go2add"; // 转发到添加教师页面
             }
         }
-        userDao.update(userEntity); // 更新教师信息
+        userService.update(userEntity); // 更新教师信息
         model.addAttribute("msg", "更新成功！！"); // 添加成功信息
         return "forward:/adm/teacher/go2show"; // 转发到显示教师列表页面
     }

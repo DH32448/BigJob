@@ -1,7 +1,7 @@
 package com.example.controller;
 
-import com.example.dao.LargeFileDao;
-import com.example.dao.UserDao;
+import com.example.Service.LargefileService;
+import com.example.Service.UserService;
 import com.example.entity.Largefile;
 import com.example.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,23 +12,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
  * 主页控制器
  * 用于处理与主页相关的请求，包括登录、登出、显示主页面和显示图片。
+ * @author X
  */
 @Controller
 @RequestMapping("/home")
 public class HomeController {
 
-    // 通过@Autowired注解自动注入UserDao和LargeFileDao
+    // 通过@Autowired注解自动注入
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
     @Autowired
-    private LargeFileDao largeFileDao;
+    private LargefileService largefileService;
 
     /**
      * 构造函数
@@ -59,7 +59,7 @@ public class HomeController {
      */
     @PostMapping("/login")
     public String login(UserEntity userEntity, HttpSession session, Model model) {
-        UserEntity user = userDao.findByUserByPhone(userEntity.getPhone());
+        UserEntity user = userService.findByUserByPhone(userEntity.getPhone());
 
         if (user == null) {
             model.addAttribute("error", "请登录");
@@ -104,9 +104,9 @@ public class HomeController {
      */
     @GetMapping("/showimg/{id}")
     public void display(@PathVariable String id, HttpServletResponse response) {
-        if (id == null) return; // 如果id为空，直接返回
+        if (id == null) {return;} // 如果id为空，直接返回
 
-        Largefile lg = largeFileDao.findOne(id); // 根据id查找图片
+        Largefile lg = largefileService.findOne(id); // 根据id查找图片
         byte[] buf = (byte[]) lg.getContent(); // 获取图片的字节数组
 
         try {

@@ -1,18 +1,19 @@
 package com.example.controller.stu;
 
-import com.example.dao.MarkDao;
-import com.example.dao.TaskDao;
+import com.example.Service.MarkService;
+import com.example.Service.TaskService;
+import com.example.Service.UserService;
 import com.example.entity.MarkEntity;
 import com.example.entity.TaskEntity;
 import com.example.entity.UserEntity;
-import com.example.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -29,13 +30,13 @@ import java.util.List;
 @RequestMapping("/stu")
 public class MyStuController {
 
-    // 通过@Autowired注解自动注入UserDao、TaskDao和MarkDao
+    // 通过@Autowired注解自动注入
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
     @Autowired
-    private TaskDao taskDao;
+    private TaskService taskService;
     @Autowired
-    private MarkDao markDao;
+    private MarkService markService;
 
     /**
      * 跳转到修改密码页面
@@ -84,7 +85,7 @@ public class MyStuController {
         }
 
         userEntity.setPwd(newPwd);
-        userDao.update(userEntity);  // 更新密码
+        userService.update(userEntity);  // 更新密码
         model.addAttribute("msg", "密码更新成功");
         return "/main"; // 密码更新成功，跳转到主页
     }
@@ -100,7 +101,7 @@ public class MyStuController {
     public String go2Course(Model model, HttpSession session) {
         model.addAttribute("action", "course");
         UserEntity user = (UserEntity) session.getAttribute("user");
-        List<TaskEntity> taskDaoByClzno = taskDao.findByClzno(user.getClzno());
+        List<TaskEntity> taskDaoByClzno = taskService.findByClzno(user.getClzno());
         model.addAttribute("taskEntityList", taskDaoByClzno);
         return "/stu/show"; // 跳转到查询课程页面
     }
@@ -116,7 +117,7 @@ public class MyStuController {
     public String go2score(Model model, HttpSession session) {
         model.addAttribute("action", "score");
         UserEntity user = (UserEntity) session.getAttribute("user");
-        List<MarkEntity> markEntityList = markDao.findBySno(user.getPhone());
+        List<MarkEntity> markEntityList = markService.findBySno(user.getPhone());
         markEntityList.forEach(System.out::println); // 打印成绩列表，用于调试
         model.addAttribute("markEntityList", markEntityList);
         return "/stu/show"; // 跳转到查询成绩页面

@@ -1,6 +1,6 @@
 package com.example.controller.adm;
 
-import com.example.dao.ClzDao;
+import com.example.Service.ClzService;
 import com.example.dao.CourseDao;
 import com.example.dao.TaskDao;
 import com.example.dao.UserDao;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -30,7 +29,7 @@ import java.util.List;
 public class AdmTaskController {
 
     @Autowired
-    private ClzDao clzDao; // 注入班级数据访问对象
+    private ClzService clzService; // 注入班级数据访问对象
 
     public AdmTaskController() {
         System.out.println("AdmTaskController 构造");
@@ -76,7 +75,7 @@ public class AdmTaskController {
         go2addTeaByRole.forEach(System.out::println); // 打印教师信息
         model.addAttribute("go2addTeaUserByRole", go2addTeaByRole); // 将教师列表添加到模型
         // 发送班级
-        List<ClzEntity> go2addTeaClz = clzDao.findAll(); // 查询所有班级
+        List<ClzEntity> go2addTeaClz = clzService.findAll(); // 查询所有班级
         model.addAttribute("go2addTeaClz", go2addTeaClz); // 将班级列表添加到模型
         // 发送课程
         List<CourseEntity> go2addTeaCourse = courseDao.findAll(); // 查询所有课程

@@ -1,22 +1,23 @@
 package com.example.controller.tea;
 
-import com.example.dao.CourseDao;
-import com.example.dao.MarkDao;
-import com.example.dao.TaskDao;
-import com.example.dao.UserDao;
-import com.example.entity.CourseEntity;
+import com.example.Service.CourseService;
+import com.example.Service.MarkService;
+import com.example.Service.TaskService;
+import com.example.Service.UserService;
 import com.example.entity.MarkEntity;
 import com.example.entity.TaskEntity;
 import com.example.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author HJX
@@ -27,13 +28,13 @@ import java.util.*;
 @RequestMapping("/tea")
 public class MyTeaController {
     @Autowired
-    UserDao userDao;
+    UserService userService;
     @Autowired
-    MarkDao markDao;
+    MarkService markService;
     @Autowired
-    TaskDao taskDao;
+    TaskService taskService;
     @Autowired
-    CourseDao courseDao;
+    CourseService courseService;
     public MyTeaController() {
         System.out.println("MyTeaController 构造");
     }
@@ -60,7 +61,7 @@ public class MyTeaController {
             return "forward:/tea/update";
         }
         userEntity.setPwd(newPwd);
-        userDao.update(userEntity);  // 更新密码
+        userService.update(userEntity);  // 更新密码
         model.addAttribute("msg", "密码更新成功");
         return "/main";
 
@@ -69,14 +70,14 @@ public class MyTeaController {
     public String go2score(Model model,HttpSession session) {
         model.addAttribute("action", "score");
         UserEntity user = (UserEntity) session.getAttribute("user");
-        List<TaskEntity> taskEntityList = taskDao.findByTid(user.getUid());
+        List<TaskEntity> taskEntityList = taskService.findByTid(user.getUid());
         model.addAttribute("taskEntityList", taskEntityList);
         return "/tea/show";
     }
     @RequestMapping("/go2score/{clzno}/{cno}")
     public String go2score(Model model, @PathVariable("clzno") String clzno, @PathVariable("cno") String cno) {
         model.addAttribute("action", "score");
-        List<UserEntity> markEntityListScore2 = markDao.findByClzno2(cno,clzno);
+        List<UserEntity> markEntityListScore2 = markService.findByClzno2(cno,clzno);
         model.addAttribute("markEntityListScore2", markEntityListScore2);
         return "/tea/show";
     }
@@ -94,7 +95,7 @@ public class MyTeaController {
         mark.setScore(markEntity.getScore());
         mark.setTid(user.getUid());
         mark.setTpost(new Date());
-        int result = markDao.add(mark);
+        int result = markService.add(mark);
         model.addAttribute("error", result > 0 ? "分数提交成功" : "分数提交失败");
 
         return "forward:/tea/go2score/"+clzno+"/"+markEntity.getCno();
@@ -108,7 +109,7 @@ public class MyTeaController {
         markEntity.setTid(user.getUid());
         markEntity.setCno(cno);
         markEntity.setSno(phone);
-        markDao.update(markEntity);
+        markService.update(markEntity);
         System.out.println(markEntity + "==============");
         return "forward:/tea/go2score/"+clzno+"/"+markEntity.getCno();
     }

@@ -1,13 +1,11 @@
 package com.example.controller.adm;
 
-import com.example.dao.ClzDao;
-import com.example.dao.LargeFileDao;
-import com.example.dao.UserDao;
+import com.example.Service.ClzService;
+import com.example.Service.LargefileService;
+import com.example.Service.UserService;
 import com.example.entity.ClzEntity;
-import com.example.entity.CourseEntity;
 import com.example.entity.Largefile;
 import com.example.entity.UserEntity;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
@@ -33,11 +30,11 @@ import java.util.UUID;
 public class AdmStudentController {
 
     @Autowired
-    private UserDao userDao; // 注入用户数据访问对象
+    private UserService userService; // 注入用户数据访问对象
     @Autowired
-    private LargeFileDao largeFileDao; // 注入大文件数据访问对象
+    private LargefileService largefileService; // 注入图片数据访问对象
     @Autowired
-    private ClzDao clzDao; // 注入班级数据访问对象
+    private ClzService clzService; // 注入班级数据访问对象
 
     public AdmStudentController() {
         System.out.println("AdmStudentController 构造");
@@ -58,7 +55,7 @@ public class AdmStudentController {
         if (user.getRole() != 9) { // 用户角色不是管理员
             return "main"; // 重定向到主页面
         }
-        List<UserEntity> userEntityListStudent = userDao.findByRole(1); // 查询所有学生
+        List<UserEntity> userEntityListStudent = userService.findByRole(1); // 查询所有学生
         model.addAttribute("userEntityListStudent", userEntityListStudent); // 将学生列表添加到模型
         return "/adm/student/show"; // 返回学生列表视图
     }
@@ -71,7 +68,7 @@ public class AdmStudentController {
     @RequestMapping("/go2add")
     public String go2add(Model model) {
         model.addAttribute("action", "add"); // 设置操作为添加
-        List<ClzEntity> clzAll = clzDao.findAll(); // 查询所有班级
+        List<ClzEntity> clzAll = clzService.findAll(); // 查询所有班级
         model.addAttribute("clzAll", clzAll); // 将班级列表添加到模型
         return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }
@@ -95,7 +92,7 @@ public class AdmStudentController {
             try {
                 // 检查并删除旧照片
                 if (userEntity.getPic() != null) {
-                    largeFileDao.delete(userEntity.getPic()); // 删除旧照片
+                    largefileService.delete(userEntity.getPic()); // 删除旧照片
                 }
                 // 上传新照片
                 Largefile largefile = new Largefile();
@@ -103,13 +100,13 @@ public class AdmStudentController {
                 largefile.setFilename(image.getOriginalFilename()); // 设置文件名
                 largefile.setContent(image.getBytes()); // 设置文件内容
                 userEntity.setPic(largefile.getId()); // 设置学生照片ID
-                System.out.println(largeFileDao.add(largefile)); // 添加照片
+                System.out.println(largefileService.add(largefile)); // 添加照片
             } catch (IOException e) {
                 model.addAttribute("error", "文件上传失败！"); // 添加错误信息
                 return "forward:/adm/student/go2add"; // 转发到添加学生页面
             }
         }
-        userDao.add(userEntity); // 添加学生
+        userService.add(userEntity); // 添加学生
         model.addAttribute("msg", "添加成功！！"); // 添加成功信息
         return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }
@@ -122,7 +119,7 @@ public class AdmStudentController {
      */
     @GetMapping("/remove")
     public String remove(UserEntity userEntity, Model model) {
-        userDao.del(userEntity.getUid()); // 删除学生
+        userService.del(userEntity.getUid()); // 删除学生
         model.addAttribute("msg", "删除成功！！"); // 添加成功信息
         return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }
@@ -136,7 +133,7 @@ public class AdmStudentController {
     @GetMapping("/go2update")
     public String go2update(Model model, UserEntity userEntity) {
         model.addAttribute("action", "update"); // 设置操作为更新
-        userEntity = userDao.findById(userEntity.getUid()); // 查询学生信息
+        userEntity = userService.findById(userEntity.getUid()); // 查询学生信息
         model.addAttribute("userEntityUpdate", userEntity); // 将学生信息添加到模型
         return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }
@@ -155,21 +152,21 @@ public class AdmStudentController {
             try {
                 // 检查并删除旧照片
                 if (userEntity.getPic() != null) {
-                    largeFileDao.delete(userEntity.getPic()); // 删除旧照片
+                    largefileService.delete(userEntity.getPic()); // 删除旧照片
                 }
                 // 上传新照片
                 Largefile largefile = new Largefile();
                 largefile.setId(UUID.randomUUID().toString()); // 生成唯一ID
                 largefile.setFilename(image.getOriginalFilename()); // 设置文件名
                 largefile.setContent(image.getBytes()); // 设置文件内容
-                System.out.println(largeFileDao.add(largefile)); // 添加照片
+                System.out.println(largefileService.add(largefile)); // 添加照片
                 userEntity.setPic(largefile.getId()); // 设置学生照片ID
             } catch (IOException e) {
                 model.addAttribute("error", "文件上传失败！"); // 添加错误信息
                 return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
             }
         }
-        userDao.update(userEntity); // 更新学生
+        userService.update(userEntity); // 更新学生
         model.addAttribute("msg", "更新成功！！"); // 添加成功信息
         return "forward:/adm/student/go2show"; // 转发到显示学生列表页面
     }

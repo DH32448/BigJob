@@ -58,4 +58,31 @@ public class MyFilter implements Filter {
         // 继续过滤链，将请求传递给下一个过滤器或目标资源
         filterChain.doFilter(servletRequest, servletResponse);
     }
+
+    /**
+     * 初始化方法
+     * 在过滤器被容器初始化时调用，用于执行一些初始化操作。
+     *
+     * 在Spring环境中，可以通过依赖注入来初始化过滤器中的其他Bean。
+     *
+     * @param filterConfig 过滤器配置对象，包含过滤器的初始化参数
+     * @throws ServletException 如果发生Servlet相关异常
+     */
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // 可以在这里进行初始化操作，例如读取配置文件、初始化资源等
+        System.out.println("MyFilter 初始化");
+    }
+
+    /**
+     * 销毁方法
+     * 在过滤器被容器销毁时调用，用于执行一些清理操作。
+     *
+     * 在Spring环境中，可以通过依赖注入来管理过滤器的生命周期。
+     */
+    @Override
+    public void destroy() {
+        // 可以在这里进行清理操作，例如释放资源、关闭连接等
+        System.out.println("MyFilter 销毁");
+    }
 }

@@ -39,3 +39,12 @@ FROM
 		LEFT JOIN t_mark m on m.sno = u.phone
 		LEFT JOIN t_course c ON m.cno = c.cno
 		WHERE role = 1  AND c.cno IS NULL
+
+
+ SET SQL_SAFE_UPDATES = 0;
+UPDATE `mark5`.`t_user` SET `role` = '1' WHERE `role` = 'stu';
+UPDATE `mark5`.`t_user` SET `role` = '5' WHERE `role` = 'tea';
+UPDATE `mark5`.`t_user` SET `role` = '9' WHERE `role` = 'adm';
+   SET SQL_SAFE_UPDATES = 1;
+   
+
